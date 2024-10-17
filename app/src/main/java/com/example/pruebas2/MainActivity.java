@@ -64,75 +64,49 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        imagen.setOnDragListener(new View.OnDragListener() {
+        imagen.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onDrag(View v, DragEvent event) {
+            public boolean onTouch(View v, MotionEvent event) {
+                imagen.setBackgroundColor(000000);
                 switch (event.getAction()) {
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        Log.d("---------------------------------","ACTION_DRAG_STARTED");
-                        return true;
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        Log.d("---------------------------------","ACTION_DRAG_ENTERED");
-                        // Code to execute when the drag enters the drop area
-                        return true;
-                    case DragEvent.ACTION_DRAG_EXITED:
-                        Log.d("---------------------------------","ACTION_DRAG_EXITED");
-                        // Code to execute when drag exits the drop area
-                        return true;
-                    case DragEvent.ACTION_DROP:
-                        Log.d("---------------------------------","ACTION_DROP");
-                        // Code to execute when dropped
-                        return true;
-                    case DragEvent.ACTION_DRAG_ENDED:
-                        Log.d("---------------------------------","ACTION_DRAG_ENDED");
-                        // Code to execute when drag ends
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
+                    case MotionEvent.ACTION_DOWN:
+                        // Capture the difference between touch coordinates and view position
+                        dX = v.getX() - event.getRawX();
+                        dY = v.getY() - event.getRawY();
+                        break;
 
+                    case MotionEvent.ACTION_MOVE:
+                        // Update the view's position as the user moves their finger
+                        dropTarget.setBackgroundColor(Color.YELLOW);
+                        v.animate()
+                                .x(event.getRawX() + dX)
+                                .y(event.getRawY() + dY)
+                                .setDuration(0)
+                                .start();
+                        break;
 
-        // Set an OnDragListener on the drop target (TextView)
-        dropTarget.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View v, DragEvent event) {
-                // Get the action type of the drag event
-                switch (event.getAction()) {
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        // Change the background color when drag starts
-                        v.setBackgroundColor(Color.YELLOW);
-                        return true;
+                    case MotionEvent.ACTION_UP:
+                        // Get the position relative to the parent (usually a layout)
+                        float finalX = v.getX(); // X relative to the parent
+                        float finalY = v.getY(); // Y relative to the parent
+                        if((finalX >= dropTarget.getX() && finalX <= dropTarget.getX() + dropTarget.getWidth()) &&
+                                (finalY >= dropTarget.getY() && finalY <= dropTarget.getY() + dropTarget.getHeight())){
+                            dropTarget.setBackgroundColor(Color.RED);
+                        }
+                        //dropTarget.setBackgroundColor(Color.GREEN);
+                        System.out.println(dropTarget.getX());
+                        System.out.println(dropTarget.getY());
+                        dropTarget.getWidth();
+                        dropTarget.getHeight();
 
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        // Change color when the dragged view enters the target area
-                        v.setBackgroundColor(Color.GREEN);
-                        return true;
-
-                    case DragEvent.ACTION_DRAG_EXITED:
-                        // Reset color when dragged view exits the target area
-                        v.setBackgroundColor(Color.YELLOW);
-                        return true;
-
-                    case DragEvent.ACTION_DROP:
-                        // Perform an action when the drop happens
-                        Toast.makeText(MainActivity.this, "Dropped!", Toast.LENGTH_SHORT).show();
-                        dX = v.getX() - event.getX();
-                        dY = v.getY() - event.getY();
-                        imagen.setX(dX);
-                        imagen.setY(dY);
-                        v.setBackgroundColor(Color.BLUE);
-                        return true;
-
-                    case DragEvent.ACTION_DRAG_ENDED:
-                        // Reset the background color to default
-                        v.setBackgroundColor(Color.DKGRAY);
-                        return true;
+                        System.out.println(finalX);
+                        System.out.println(finalY);
+                        break;
 
                     default:
                         return false;
                 }
+                return true;
             }
         });
     }
