@@ -67,20 +67,25 @@ public class MainActivity extends AppCompatActivity {
         imagen.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                Log.d("-- v.getX()------------------------", Float.toString( v.getX()));
+                Log.d("-- v.getY()------------------------", Float.toString( v.getY()));
+                Integer cubox = v.getWidth();
+                Integer cuboy = v.getHeight();
                 imagen.setBackgroundColor(000000);
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         // Capture the difference between touch coordinates and view position
-                        dX = v.getX() - event.getRawX();
-                        dY = v.getY() - event.getRawY();
+                        dX = (v.getWidth() / 2) - event.getX();
+                        dY = (v.getHeight() / 2) - event.getY();
+
                         break;
 
                     case MotionEvent.ACTION_MOVE:
                         // Update the view's position as the user moves their finger
                         dropTarget.setBackgroundColor(Color.YELLOW);
                         v.animate()
-                                .x(event.getRawX() + dX)
-                                .y(event.getRawY() + dY)
+                                .x(event.getRawX() - v.getWidth() / 2) // Adjust for center
+                                .y(event.getRawY() - v.getHeight() / 2)
                                 .setDuration(0)
                                 .start();
                         break;
@@ -89,16 +94,27 @@ public class MainActivity extends AppCompatActivity {
                         // Get the position relative to the parent (usually a layout)
                         float finalX = v.getX(); // X relative to the parent
                         float finalY = v.getY(); // Y relative to the parent
-                        if((finalX >= dropTarget.getX() && finalX <= dropTarget.getX() + dropTarget.getWidth()) &&
-                                (finalY >= dropTarget.getY() && finalY <= dropTarget.getY() + dropTarget.getHeight())){
+
+                        if((finalX <= ((dropTarget.getX() + dropTarget.getWidth())-cubox) && finalX >= dropTarget.getX()) &&
+                                (finalY >= dropTarget.getY() && finalY <= ((dropTarget.getY() + dropTarget.getHeight())-cuboy))){
                             dropTarget.setBackgroundColor(Color.RED);
                         }
-                        //dropTarget.setBackgroundColor(Color.GREEN);
-                        System.out.println(dropTarget.getX());
-                        System.out.println(dropTarget.getY());
-                        dropTarget.getWidth();
-                        dropTarget.getHeight();
 
+                        Log.d("-- getRawX---", Float.toString( event.getRawX()));
+                        Log.d("-- getRawY++++++++++", Float.toString( event.getRawY()));
+                        Log.d("-- v.getX()---", Float.toString( v.getX()));
+                        Log.d("-- v.getY()---", Float.toString( v.getY()));
+
+
+                        Log.d("-- ANCHOSTART---", Float.toString( dropTarget.getX()));
+                        Log.d("-- ALTURA START---", Float.toString( dropTarget.getY()));
+
+                        Log.d("-- ANCHO---", Float.toString( dropTarget.getWidth()));
+                        Log.d("-- ALTURA---", Float.toString( dropTarget.getHeight()));
+                        Log.d("-- finalx---", Float.toString( finalX));
+                        Log.d("-- finaly---", Float.toString( finalY));
+
+                        //dropTarget.setBackgroundColor(Color.GREEN);
                         System.out.println(finalX);
                         System.out.println(finalY);
                         break;
